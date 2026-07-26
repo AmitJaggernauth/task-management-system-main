@@ -45,5 +45,44 @@ router.get("/", (req, res) => {
   res.json({ success: true, data: tasks });
 });
 
+/* 
+   UPDATE TASK
+*/
+router.put("/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const task = tasks.find((t) => t.id === id);
+
+  if (!task) {
+    return res.status(404).json({
+      success: false,
+      message: "Task not found",
+    });
+  }
+
+  const { title, status, priority, dueDate, projectId } = req.body;
+
+  // Apply updates only if provided
+  if (title !== undefined) task.title = title;
+  if (status !== undefined) task.status = status;
+  if (priority !== undefined) task.priority = priority;
+  if (dueDate !== undefined) task.dueDate = dueDate;
+  if (projectId !== undefined) task.projectId = projectId;
+
+  res.json({ success: true, data: task });
+});
+
+/* 
+   SEARCH TASKS
+ */
+router.get("/search/query", (req, res) => {
+  const q = req.query.q?.toLowerCase() || "";
+
+  const results = tasks.filter((t) =>
+    t.title.toLowerCase().includes(q)
+  );
+
+  res.json({ success: true, data: results });
+});
+
 module.exports = router;
 module.exports.resetTasks = resetTasks; // Export reset function for testing

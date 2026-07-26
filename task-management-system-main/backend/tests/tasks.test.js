@@ -110,3 +110,103 @@ describe("GET /tasks", () => {
     expect(response.body.success).toBe(true);
   });
 });
+
+/* 
+   WEEK 2 - UPDATE TASK 
+*/
+describe("PUT /tasks/:id", () => {
+  it("should update a task when valid fields are provided", async () => {
+    await request(app).post("/tasks").send({
+      title: "Original",
+      status: "Pending",
+      priority: "Low",
+    });
+
+    const response = await request(app)
+      .put("/tasks/1")
+      .send({ title: "Updated Title", priority: "High" });
+
+    expect(response.status).toBe(200);
+    expect(response.body.success).toBe(true);
+    expect(response.body.data.title).toBe("Updated Title");
+    expect(response.body.data.priority).toBe("High");
+  });
+
+  it("should return 404 if task does not exist", async () => {
+    const response = await request(app)
+      .put("/tasks/999")
+      .send({ title: "Doesn't matter" });
+
+    expect(response.status).toBe(404);
+    expect(response.body.success).toBe(false);
+    expect(response.body.message).toBe("Task not found");
+  });
+
+  it("should allow partial updates", async () => {
+    await request(app).post("/tasks").send({
+      title: "Partial",
+      status: "Pending",
+      priority: "Low",
+    });
+
+    const response = await request(app)
+      .put("/tasks/1")
+      .send({ status: "In Progress" });
+
+    expect(response.status).toBe(200);
+    expect(response.body.data.status).toBe("In Progress");
+  });
+});
+
+/* 
+   WEEK 3 - SEARCH TASKS
+*/
+describe("GET /tasks/search/query?q=", () => {
+  beforeEach(async () => {
+    await request(app).post("/tasks").send({
+      title: "Fix login bug",
+      status: "Pending",
+      priority: "High",
+    });
+
+    await request(app).post("/tasks").send({
+      title: "Write documentation",
+      status: "In Progress",
+      priority: "Medium",
+    });
+
+    await request(app).post("/tasks").send({
+      title: "Deploy to production",
+      status: "Completed",
+      priority: "High",
+    });
+  });
+
+  it("should return tasks matching the search query", async () => {
+    const response = await request(app).get(
+      "/tasks/search/query?q=fix"
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.body.data.length).toBe(1);
+    expect(response.body.data[0].title).toBe("Fix login bug");
+  });
+
+  it("should return multiple matches", async () => {
+    const response = await request(app).get(
+      "/tasks/search/query?q=to"
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.body.data.length).toBe(2);
+  });
+
+  it("should return an empty array if no matches found", async () => {
+    const response = await request(app).get(
+      "/tasks/search/query?q=xyz"
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.body.data.length).toBe(0);
+  });
+});
