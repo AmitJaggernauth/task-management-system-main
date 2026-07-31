@@ -22,7 +22,7 @@ describe('CreateTaskComponent', () => {
     mockService = jasmine.createSpyObj('TaskService', ['createTask']);
 
     TestBed.configureTestingModule({
-      imports: [FormsModule],
+      imports: [CreateTaskComponent, FormsModule],
       providers: [{ provide: TaskService, useValue: mockService }],
     });
 

@@ -1,6 +1,6 @@
 /**
  * list-tasks.component.spec.ts
- * Week 1 - Task Management System
+ * Week 1 & Week 3 - Task Management System
  * Author: Nicole Nielsen
  * Purpose: Unit tests for the ListTasksComponent
  */
@@ -15,27 +15,27 @@ describe('ListTasksComponent', () => {
   let fixture: ComponentFixture<ListTasksComponent>;
   let mockService: jasmine.SpyObj<TaskService>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     mockService = jasmine.createSpyObj('TaskService', ['getTasks']);
 
-    TestBed.configureTestingModule({
-      declarations: [ListTasksComponent],
+    await TestBed.configureTestingModule({
+      imports: [ListTasksComponent],
       providers: [{ provide: TaskService, useValue: mockService }],
-    });
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ListTasksComponent);
     component = fixture.componentInstance;
   });
 
   /**
-   * Test 1 - Component should be created successfully
+   * Week 1 - Test 1 - Component should be created successfully
    */
   it('should create the component', () => {
     expect(component).toBeTruthy();
   });
 
   /**
-   * Test 2: getTasks() should be called on initialization
+   * Week 1 - Test 2: getTasks() should be called on initialization
    */
   it('should call getTasks on init', () => {
     const mockTasks: Task[] = [
@@ -53,7 +53,7 @@ describe('ListTasksComponent', () => {
   });
 
   /**
-   * Test 3: tasks returned from the service should be stored correctly
+   * Week 1 - Test 3: tasks returned from the service should be stored correctly
    */
   it('should store tasks returned by the service', () => {
     const mockTasks: Task[] = [

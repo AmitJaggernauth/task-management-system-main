@@ -1,6 +1,6 @@
 /**
  * read-task.component.spec.ts
- * Week 1 - Task Management System
+ * Week 1 & Week 2 - Task Management System
  * Author: Nicole Nielsen
  * Purpose: Unit tests for the ReadTaskComponent
  */
@@ -9,28 +9,39 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReadTaskComponent } from './read-task.component';
 import { TaskService, Task } from '../../services/task.service';
 import { ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 describe('ReadTaskComponent', () => {
   let component: ReadTaskComponent;
   let fixture: ComponentFixture<ReadTaskComponent>;
+
+  // Mock TaskService
   let mockService: jasmine.SpyObj<TaskService>;
+
+  // Mock ActivatedRoute
   let mockRoute: jasmine.SpyObj<ActivatedRoute>;
 
   beforeEach(() => {
-    // Mock TaskService
-    mockService = jasmine.createSpyObj('TaskService', ['getTasks']);
+    /**
+     * Create a spy object for TaskService
+     * Week 2 Requirement: getTaskById(), not getTasks()
+     */
+    mockService = jasmine.createSpyObj('TaskService', ['getTaskById']);
 
-    // Mock ActivatedRoute with a fake paramMap.get()
+    /**
+     * Mock ActivatedRoute with a fake paramMap.get()
+     * Pretend the route is /tasks/read/1
+     */
     mockRoute = jasmine.createSpyObj('ActivatedRoute', [], {
       snapshot: {
         paramMap: {
-          get: () => '1', // Pretend the route is /tasks/read/1
+          get: () => '1',
         },
       },
     });
 
     TestBed.configureTestingModule({
+      imports: [ReadTaskComponent], // standalone component
       providers: [
         { provide: TaskService, useValue: mockService },
         { provide: ActivatedRoute, useValue: mockRoute },
@@ -49,37 +60,57 @@ describe('ReadTaskComponent', () => {
   });
 
   /**
-   * Test 2 — getTasks() should be called on initialization
+   * Test 2 — getTaskById() should be called on initialization
    */
-  it('should call getTasks on init', () => {
-    const mockTasks: Task[] = [
-      { id: 1, title: 'Task One', status: 'Pending', priority: 'High' },
-    ];
+  it('should call getTaskById on init', () => {
+    const mockTask = {
+      id: 1,
+      title: 'Task One',
+      status: 'Pending',
+      priority: 'High',
+    };
 
-    mockService.getTasks.and.returnValue(
-      of({ success: true, data: mockTasks }),
+    mockService.getTaskById.and.returnValue(
+      of({ success: true, data: mockTask }),
     );
 
-    component.ngOnInit();
+    fixture.detectChanges(); // triggers ngOnInit()
 
-    expect(mockService.getTasks).toHaveBeenCalled();
+    expect(mockService.getTaskById).toHaveBeenCalledWith('1');
   });
 
   /**
-   * Test 3 — Should store the correct task based on route param
+   * Test 3 — Should store the correct task returned by the service
    */
-  it('should store the task matching the route ID', () => {
-    const mockTasks: Task[] = [
-      { id: 1, title: 'Task One', status: 'Pending', priority: 'High' },
-      { id: 2, title: 'Task Two', status: 'Complete', priority: 'Low' },
-    ];
+  it('should store the task returned by the service', () => {
+    const mockTask = {
+      id: 1,
+      title: 'Task One',
+      status: 'Pending',
+      priority: 'High',
+    };
 
-    mockService.getTasks.and.returnValue(
-      of({ success: true, data: mockTasks }),
+    mockService.getTaskById.and.returnValue(
+      of({ success: true, data: mockTask }),
     );
 
-    component.ngOnInit();
+    fixture.detectChanges();
 
-    expect(component.task).toEqual(mockTasks[0]); // ID 1
+    expect(component.task).toEqual(mockTask);
+  });
+
+  /**
+   * Test 4 - Should handle service errors correctly
+   * Week 2 Requirement - Error Handling
+   */
+  it('should store an error message if the service fails', () => {
+    mockService.getTaskById.and.returnValue(
+      throwError(() => ({ error: { message: 'Task not found' } })),
+    );
+
+    fixture.detectChanges();
+
+    expect(component.error).toBe('Task not found');
+    expect(component.task).toBeUndefined();
   });
 });

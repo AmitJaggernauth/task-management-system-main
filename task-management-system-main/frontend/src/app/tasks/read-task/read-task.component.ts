@@ -1,6 +1,6 @@
 /**
  * read-task.component.ts
- * Week 1 - Task Management System
+ * Week 1, 2 & 4 - Task Management System
  * Author: Nicole Nielsen
  * Purpose: Component for retrieving and displaying a single task by ID
  */
@@ -16,32 +16,101 @@ import { TaskService, Task } from '../../services/task.service';
   standalone: true,
   imports: [FormsModule, CommonModule],
   template: `
-    <div class="task-details">
-      <h2>Task Details</h2>
+    <div class="task-details-container">
+      <h2 class="page-title">Task Details</h2>
 
-      <!-- Show a message if no task was found -->
-      <div *ngIf="!task">Task not found.</div>
+      <!-- Error message -->
+      <div *ngIf="error" class="error-card">{{ error }}</div>
 
-      <!-- Display the selected task -->
-      <div *ngIf="task">
-        <p><strong>Title:</strong> {{ task.title }}</p>
-        <p><strong>Status:</strong> {{ task.status }}</p>
-        <p><strong>Priority:</strong> {{ task.priority }}</p>
+      <!-- Show a message if task not found -->
+      <div *ngIf="!task && !error" class="error-card">Task not found.</div>
 
-        <!-- Optional fields -->
-        <p *ngIf="task.dueDate">
-          <strong>Due Date:</strong> {{ task.dueDate }}
-        </p>
-        <p *ngIf="task.projectId">
-          <strong>Project ID:</strong> {{ task.projectId }}
-        </p>
+      <!-- Task details card -->
+      <div *ngIf="task" class="task-card">
+        <div class="task-title">{{ task.title }}</div>
+
+        <div class="task-meta">
+          <p><strong>Status:</strong> {{ task.status }}</p>
+          <p><strong>Priority:</strong> {{ task.priority }}</p>
+
+          <!-- Optional fields -->
+          <p *ngIf="task.dueDate">
+            <strong>Due Date:</strong> {{ task.dueDate }}
+          </p>
+          <p *ngIf="task.projectId">
+            <strong>Project ID:</strong> {{ task.projectId }}
+          </p>
+        </div>
+
+        <button class="back-btn" routerLink="/tasks/list">Back to Tasks</button>
       </div>
     </div>
   `,
+  styles: [
+    `
+      .task-details-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      .page-title {
+        font-family: var(--font-header);
+        font-size: 1.6rem;
+        color: var(--accent-dark);
+        margin-bottom: 0.5rem;
+      }
+
+      /* ---------- Cards ---------- */
+      .error-card {
+        border-left: 6px solid var(--accent-warm);
+      }
+      .task-card {
+        background: var(--bg-card);
+        padding: 1.2rem 1.4rem;
+        border-radius: var(--radius-soft);
+        box-shadow: var(--shadow-soft);
+        border-left: 6px solid var(--accent-primary);
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        max-width: 480px;
+      }
+
+      /* ---------- Task Info ---------- */
+      .task-title {
+        font-family: var(--font-header);
+        font-size: 1.4rem;
+        color: var(--accent-dark);
+        letter-spacing: -0.3px;
+      }
+
+      .task-meta {
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+      }
+
+      /* ---------- Back Button ---------- */
+      .back-btn {
+        background: var(--accent-primary);
+        width: fit-content;
+      }
+
+      .back-btn:hover {
+        background: var(--accent-secondary);
+      }
+    `,
+  ],
 })
 export class ReadTaskComponent implements OnInit {
   // Holds the task retrieved from the backend
   task: Task | undefined;
+
+  // Holds error messages from the backend
+  error: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -51,16 +120,23 @@ export class ReadTaskComponent implements OnInit {
   // Lifecycle hook: runs once when the component loads
   ngOnInit() {
     // Extract the ID from the route parameters
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    const id = this.route.snapshot.paramMap.get('id');
 
-    // Fetch all tasks from the backend API
-    this.taskService.getTasks().subscribe({
+    if (!id) {
+      this.error = 'Invalid task ID';
+      return;
+    }
+
+    /**
+     * Week 2 Requirement:
+     * Call GET /tasks/:id instead of fetching all tasks
+     */
+    this.taskService.getTaskById(id).subscribe({
       next: (res) => {
-        // Find the task with the matching ID
-        this.task = res.data.find((t) => t.id === id);
+        this.task = res.data;
       },
       error: (err) => {
-        console.error('Error fetching task:', err);
+        this.error = err.error?.message || 'Error fetching task';
       },
     });
   }

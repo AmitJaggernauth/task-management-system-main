@@ -1,6 +1,6 @@
 /**
  * update-task.component.spec.ts
- * Week 1 - Task Management System
+ * Week 1 & 4 - Task Management System
  * Author: Nicole Nielsen
  * Purpose: Unit tests for the UpdateTaskComponent
  */
@@ -9,8 +9,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { UpdateTaskComponent } from './update-task.component';
 import { TaskService, Task } from '../../services/task.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { of } from 'rxjs';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('UpdateTaskComponent', () => {
   let component: UpdateTaskComponent;
@@ -20,12 +21,20 @@ describe('UpdateTaskComponent', () => {
 
   beforeEach(() => {
     mockService = jasmine.createSpyObj('TaskService', [
-      'getTasks',
+      'getTaskById',
       'updateTask',
     ]);
 
-    mockService.getTasks.and.returnValue(
-      of({ success: true, data: [] }), // <-- REQUIRED FIX
+    mockService.getTaskById.and.returnValue(
+      of({
+        success: true,
+        data: {
+          id: 1,
+          title: 'Task One',
+          status: 'Not Started',
+          priority: 'High',
+        },
+      }),
     );
 
     mockRoute = jasmine.createSpyObj('ActivatedRoute', [], {
@@ -37,7 +46,7 @@ describe('UpdateTaskComponent', () => {
     });
 
     TestBed.configureTestingModule({
-      imports: [FormsModule, UpdateTaskComponent],
+      imports: [FormsModule, UpdateTaskComponent, RouterTestingModule],
       providers: [
         { provide: TaskService, useValue: mockService },
         { provide: ActivatedRoute, useValue: mockRoute },
@@ -46,7 +55,7 @@ describe('UpdateTaskComponent', () => {
 
     fixture = TestBed.createComponent(UpdateTaskComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges(); 
+    fixture.detectChanges();
   });
 
   /**
@@ -57,40 +66,32 @@ describe('UpdateTaskComponent', () => {
   });
 
   /**
-   * Test 2 — getTasks() should be called on initialization
+   * Test 2 — getTaskById() should be called on initialization
    */
-  it('should call getTasks on init', () => {
-    const mockTasks: Task[] = [
-      { id: 1, title: 'Task One', status: 'Pending', priority: 'High' },
-    ];
-
-    mockService.getTasks.and.returnValue(
-      of({ success: true, data: mockTasks }),
-    );
-
+  it('should call getTaskById on init', () => {
     component.ngOnInit();
-
-    expect(mockService.getTasks).toHaveBeenCalled();
+    expect(mockService.getTaskById).toHaveBeenCalledWith('1');
   });
 
   /**
    * Test 3 — updateTask() should be called on submit
    */
   it('should call updateTask on submit', () => {
-    const mockTasks: Task[] = [
-      { id: 1, title: 'Task One', status: 'Pending', priority: 'High' },
-    ];
-
-    mockService.getTasks.and.returnValue(
-      of({ success: true, data: mockTasks }),
-    );
     mockService.updateTask.and.returnValue(
-      of({ success: true, data: mockTasks[0] }),
+      of({
+        success: true,
+        data: {
+          id: 1,
+          title: 'Task One',
+          status: 'Not Started',
+          priority: 'High',
+        },
+      }),
     );
 
     component.ngOnInit();
     component.onSubmit();
 
-    expect(mockService.updateTask).toHaveBeenCalledWith(mockTasks[0]);
+    expect(mockService.updateTask).toHaveBeenCalledWith(component.task!);
   });
 });

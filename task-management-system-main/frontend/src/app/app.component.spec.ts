@@ -1,10 +1,18 @@
+/**
+ * app.component.spec.ts
+ * Weeks 1-3 - Task Management System
+ * Author: Niki Nielsen
+ * Purpose: Root component testing for sprint features
+ */
+
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AppComponent],
+      imports: [AppComponent, RouterTestingModule],
     }).compileComponents();
   });
 
@@ -24,6 +32,8 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, frontend-app');
+    expect(compiled.querySelector('h1')?.textContent).toContain(
+      'Hello, frontend-app',
+    );
   });
 });

@@ -1,1 +1,201 @@
-/* GLOBAL STYLE SHEET FOR TMS */
+/* ====================================
+    GLOBAL THEME - Niki Nielsen
+    Warm & Slightly Retro Monospace Minimalism
+  ==================================== */
+
+/* Import Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Sono:wght,MONO@200..800,1&display=swap");
+
+/* --- CSS Variables --- */
+:root {
+  /* Backgrounds */
+  --bg-app: #fdede3;
+  --bg-card: #ffdcba;
+
+  /* Task Status Colors */
+  --status-not-started: #e6aea4;
+  --status-in-progress: #755151;
+  --status-completed: #716a4d;
+
+  /* Accent Colors */
+  --accent-primary: #e9a98e;
+  --accent-secondary: #af624a;
+  --accent-dark: #16353d;
+  --accent-warm: #7a4141;
+
+  /* Text */
+  --text-main: #030101;
+  --text-muted: #5a3a32;
+  --text-light: #ffffff;
+
+  /* Shadows */
+  --shadow-soft: 0px 2px 6px rgba(37, 3, 3, 0.08);
+  --shadow-medium: 0px 4px 12px rgba(37, 3, 3, 0.12);
+
+  /* Radius */
+  --radius-soft: 8px;
+  --radius-round: 12px;
+
+  /* Fonts */
+  --font-body: "Sono", monospace;
+  --font-header: "Fraunces", serif;
+}
+
+/* ------ Global Reset ------ */
+body {
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--bg-app);
+}
+
+.main-wrapper {
+  width: 100%;
+  max-width: 960px;
+  padding: 3rem 2rem;
+}
+
+/* ------ Header & Navigation ------ */
+header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.app-title {
+  text-align: center;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+.main-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding: 1rem 0;
+}
+
+.main-nav a {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: var(--accent-warm);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  text-decoration: none;
+  color: var(--bg-app);
+  border-radius: var(--radius-soft);
+}
+
+.main-nav a:hover,
+.main-nav a:focus {
+  background: var(--accent-dark);
+  color: var(--text-light);
+  box-shadow: var(--shadow-medium);
+  transform: translateY(2px);
+}
+
+section {
+  margin-bottom: 2.5rem;
+}
+
+/* ------ Typography ------ */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-header);
+  font-weight: 600;
+  color: var(--accent-dark);
+  margin-bottom: 1rem;
+}
+
+h1 {
+  font-size: 2rem;
+  letter-spacing: -0.5px;
+}
+
+h2 {
+  font-size: 1.6rem;
+}
+
+h3 {
+  font-size: 1.3rem;
+}
+
+/* ---------- Layout Helpers ---------- */
+.app-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* ---------- Card Style ---------- */
+.card {
+  background: var(--bg-card);
+  padding: 2rem;
+  border-radius: var(--radius-round);
+  box-shadow: var(--shadow-medium);
+  border: 1px solid rgba(37, 3, 3, 0.05);
+  transition: transform 0.15s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+/* ---------- Buttons ---------- */
+button {
+  background: var(--accent-secondary);
+  color: var(--text-main);
+  border: none;
+  padding: 0.6rem 1.2rem;
+  margin-top: 1rem;
+  border-radius: var(--radius-soft);
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease;
+}
+
+button:hover {
+  background: var(--accent-dark);
+  transform: translateY(-1px);
+}
+
+/* ---------- Inputs ---------- */
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: var(--radius-soft);
+  border: 1px solid var(--accent-primary);
+  background: #ffffff;
+  font-family: var(--font-body);
+  margin-bottom: 1rem;
+}
+
+/* ---------- Status Badges ---------- */
+.status-badge {
+  display: inline-block;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-round);
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: var(--text-light);
+  font-family: var(--font-body);
+}
+
+.status-not-started {
+  background: var(--status-not-started);
+}
+
+.status-in-progress {
+  background: var(--status-in-progress);
+}
+
+.status-completed {
+  background: var(--status-completed);
+}

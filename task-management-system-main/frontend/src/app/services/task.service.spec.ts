@@ -61,6 +61,7 @@ describe('TaskService', () => {
    */
   it('should create a task via POST', () => {
     const newTask: Task = {
+      id: 1,
       title: 'New Task',
       status: 'Pending',
       priority: 'Low',
