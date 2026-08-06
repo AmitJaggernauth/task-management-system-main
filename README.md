@@ -38,7 +38,17 @@ This repository contains all Week 1 work, completed Week 2 Student A respons
 
 ---
 
-## Week 3 Status - Completed (Student A Enhancements)
+Week 3 — Search Tasks
+GET /tasks/search/query?q=term
+Searches tasks by title (case-insensitive).
+
+✔ Includes 3 unit tests:
+
+Returns matching tasks
+
+Returns multiple matches
+
+Returns empty array when no matches
 
 ### Frontend
 
@@ -51,9 +61,17 @@ This repository contains all Week 1 work, completed Week 2 Student A respons
 
 ## Week 2 Status - Completed (Student A Work)
 
-### Backend
+Week 2 — Update Task
+PUT /tasks/:id
+Updates any provided fields on a task.
 
-- Added GET /tasks/:id with error handling for invalid/missing IDs.
+✔ Includes 3 unit tests:
+
+Updates valid fields
+
+Returns 404 for missing task
+
+Allows partial updates
 
 ### Frontend
 
